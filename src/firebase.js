@@ -33,30 +33,48 @@ export function createUser(email, password) {
 
     return auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-            // Signed in
             const user = userCredential.user;
             setData(`/users/${user.uid}`, {
                 email
             });
-            // ...
+            localStorage.setItem('currentUser', JSON.stringify(userCredential.user));
         })
         .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            return error.code
         });
+}
+
+export function signOut() {
+    const auth = firebase.auth();
+    return auth.signOut().then(() => {
+        localStorage.removeItem('currentUser');
+        window.alert('Deconnexion réussi');
+    });
 }
 
 export function signUser(email, password) {
     const auth = firebase.auth();
 
-     return auth.signInWithEmailAndPassword(email, password)
+    return auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-            // Signed in
-            var user = userCredential.user;
+            localStorage.setItem('currentUser', JSON.stringify(userCredential.user));
+            return userCredential.user;
         })
         .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
+            if (error.code !== undefined) {
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        return {
+                            'successful': false,
+                            'message': 'Utilisateur non trouvé'
+                        }
+                    case 'auth/wrong-password':
+                        return {
+                            'successful': false,
+                            'message': 'Mot de passe incorrect'
+                        }
+                }
+            }
         });
 }
 
@@ -68,7 +86,7 @@ export function pushData(path = '/', data) {
 }
 
 export function createDocument(name, description) {
-    const auth     = firebase.auth();
+    const auth = firebase.auth();
     const user = auth.currentUser;
 
     if (user !== null) {
@@ -102,8 +120,6 @@ export function subscribeDocs(path = '/', cb = () => {}) {
 export function getDoc(path = '/', cb = () => {}) {
     const database = firebase.database();
     const ref = database.ref(path);
-    console.log(path)
-
     ref.on('value', (snapshot) => {
         cb(snapshot.val());
     })
@@ -113,8 +129,22 @@ export function getDoc(path = '/', cb = () => {}) {
 export function updateDoc(path = '/', datas) {
     const database = firebase.database();
     const ref = database.ref(path);
-    ref.update({'description' : ''}).then(() => {
-        ref.update({'description': datas})
-    })
-
+    ref.update({'description': htmlentities.encode(datas)})
 }
+
+window.htmlentities = {
+    encode : function(str) {
+        var buf = [];
+
+        for (var i=str.length-1;i>=0;i--) {
+            buf.unshift(['&#', str[i].charCodeAt(), ';'].join(''));
+        }
+
+        return buf.join('');
+    },
+    decode : function(str) {
+        return str.replace(/&#(\d+);/g, function(match, dec) {
+            return String.fromCharCode(dec);
+        });
+    }
+};

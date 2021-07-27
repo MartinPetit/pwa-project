@@ -39,7 +39,4 @@ page('/:key', (ctx) => {
     import('./views/documents-show');
 });
 
-
-
-
 page();

@@ -106,7 +106,6 @@ class FireDocs extends Base {
 
     handleCreateDoc({ detail }) {
         createDocument(detail.name, detail.description);
-
     }
 
 

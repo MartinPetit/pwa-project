@@ -1,9 +1,7 @@
-import {LitElement, html, css} from 'lit';
-
-import page from 'page';
-
+import {html, css} from 'lit';
 import Base from '../Base';
-import { signUser} from "../firebase";
+import {signUser} from "../firebase";
+import page from "page";
 
 class Login extends Base {
 
@@ -35,22 +33,19 @@ class Login extends Base {
     }
 
     login(e) {
-
+        e.preventDefault()
         if (this.email === '' || this.password === '') {
-            alert('Email and password empty !')
-            e.preventDefault()
-            page('/login');
-        }
-        else {
+            console.log('Email and password empty !')
+        } else {
             signUser(this.email, this.password).then((res) => {
-                alert('Connexion succeed ! ')
+                if (res.successful === false) {
+                    console.log(res.message)
+                } else {
+                    page('/documents');
+                }
             });
-            e.preventDefault();
-            page('/documents');
         }
     };
-
-
 
     render() {
         return html`

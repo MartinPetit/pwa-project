@@ -1,7 +1,7 @@
 import {LitElement, html, css} from 'lit';
 
 import page from 'page';
-import { createDocument} from "../firebase";
+import {createDocument} from "../firebase";
 import Base from '../Base';
 import '../components/doc-list'
 
@@ -47,7 +47,7 @@ class Documents extends Base {
                     name: this.name,
                     description: this.description
                 }
-        }))
+            }))
         }
         e.preventDefault();
     }
@@ -57,34 +57,38 @@ class Documents extends Base {
             <section>
                 <header class="px-4 py-4">
                     <div class="md:w-1/3">
-                    <form @submit="${this.createDoc}" class="h-8 flex items-center">
-                        <label class="flex-1" aria-label="Add todo input">
-                            <input  @input="${e => this.name = e.target.value}"
-                                    class="py-3 px-4 rounded-sm w h-full outline-none border-b-2"
-                                    type="text"
-                                    placeholder="Nom"
-                                    name="Doc name">
-                        </label>
-                        <label class="flex-1" aria-label="Add todo input">
-                            <input  @input="${e => this.description = e.target.value}"
-                                    class="py-3 px-4 rounded-sm h-full outline-none border-b-2"
-                                    type="text"
-                                    placeholder="Description"
-                                    name="Doc name">
-                        </label>
-                        <button
-                                aria-label="Add"
-                                class="ml-4 rounded-lg text-uppercase bg-blue-400 h-full text-center px-3 uppercase text-white font-bold flex justify-center items-center"
-                                type="submit">Créer</button>
-                    </form>
+                        <form @submit="${this.createDoc}" class="h-8 flex items-center">
+                            <label class="flex-1" aria-label="Add todo input">
+                                <input @input="${e => this.name = e.target.value}"
+                                       class="py-3 px-4 rounded-sm w h-full outline-none border-b-2"
+                                       type="text"
+                                       placeholder="Nom"
+                                       name="Doc name">
+                            </label>
+                            <label class="flex-1" aria-label="Add todo input">
+                                <input @input="${e => this.description = e.target.value}"
+                                       class="py-3 px-4 rounded-sm h-full outline-none border-b-2"
+                                       type="text"
+                                       placeholder="Description"
+                                       name="Doc name">
+                            </label>
+                            <button
+                                    aria-label="Add"
+                                    class="ml-4 rounded-lg text-uppercase bg-blue-400 h-full text-center px-3 uppercase text-white font-bold flex justify-center items-center"
+                                    type="submit">Créer
+                            </button>
+                        </form>
                     </div>
                 </header>
                 <main class="mt-4 px-4">
-                    <ul class="space-y-4">
-                        ${ this.docs.map(doc => html`
-                            <li><doc-list .doc="${doc}"></doc-list></li>
-            `           )}
-                    </ul>
+                    <div class="container mx-auto">
+                        <div class="grid grid-cols-3 gap-4 gap-x-8 gap-y-4">
+                            ${this.docs.map(doc => html`
+                                <div>
+                                    <doc-list .doc="${doc}"></doc-list>
+                                </div
+                            `)}
+                        </div>
                 </main>
             </section>
         `;
