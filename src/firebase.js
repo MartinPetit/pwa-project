@@ -21,6 +21,7 @@ export function initFirebase() {
         messagingSenderId,
         appId
     })
+
 }
 
 export function setData(path = '/', data) {
@@ -60,10 +61,12 @@ export function signUser(email, password) {
         });
 }
 
-export function pushData(path = '/', data) {
+export function pushData(path = '/', data, name, description) {
     const database = firebase.database();
     const key = database.ref().child(path).push().key;
     database.ref(`${path}/${key}`).set(data);
+
+    insertDocsOffline(name, description, key, true)
 
 }
 
@@ -76,7 +79,7 @@ export function createDocument(name, description) {
             name: name,
             description: description,
             user: user.uid
-        });
+        }, name, description);
     } else {
         return 'error: Not connected'
     }
@@ -84,6 +87,7 @@ export function createDocument(name, description) {
 
 
 export function subscribeDocs(path = '/', cb = () => {}) {
+
     const database = firebase.database();
     let list = [];
     database.ref().child(path)
@@ -105,16 +109,102 @@ export function getDoc(path = '/', cb = () => {}) {
     console.log(path)
 
     ref.on('value', (snapshot) => {
+        console.log('plop')
         cb(snapshot.val());
     })
 
 }
 
 export function updateDoc(path = '/', datas) {
+
     const database = firebase.database();
     const ref = database.ref(path);
     ref.update({'description' : ''}).then(() => {
         ref.update({'description': datas})
     })
 
+    insertDocsOffline(null, datas, ref.key, false)
+
+
+}
+
+export function insertDocsOffline(name, description, key, editOrInsert) {
+    const request = indexedDB.open('offline-database', 1);
+    request.onupgradeneeded = (event) => {
+        let db = event.target.result;
+
+        db.createObjectStore('Documents', {
+            autoIncrement: true
+        });
+
+    };
+
+    if (editOrInsert) {
+        request.onsuccess = (event) => {
+            const db = event.target.result;
+
+            insertDoc(db, {
+                name: name,
+                description: description
+            }, key);
+
+        };
+    } else {
+        request.onsuccess = (event) => {
+            const db = event.target.result;
+
+            updateDocIdb(db, description, key);
+
+        };
+    }
+
+
+}
+
+export function insertDoc(db, document, key) {
+    // create a new transaction
+    const txn = db.transaction('Documents', 'readwrite');
+
+    // get the Contacts object store
+    const store = txn.objectStore('Documents');
+    //
+    let query = store.put(document, key);
+
+
+    // handle success case
+    query.onsuccess = function (event) {
+        console.log(event);
+    };
+
+    // handle the error case
+    query.onerror = function (event) {
+        console.log(event.target.errorCode);
+    }
+
+    // close the database once the
+    // transaction completes
+    txn.oncomplete = function () {
+        db.close();
+    };
+}
+
+
+export function updateDocIdb(db, document, key) {
+    // create a new transaction
+    const txn = db.transaction('Documents', 'readwrite');
+
+    // get the Contacts object store
+    const store = txn.objectStore('Documents');
+    //
+    store.get(key).onsuccess = function(e) {
+        var obj = e.target.result;
+        obj.description = document;
+        store.put(obj, key);
+    };
+
+    // close the database once the
+    // transaction completes
+    txn.oncomplete = function () {
+        db.close();
+    };
 }

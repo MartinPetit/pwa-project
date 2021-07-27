@@ -57,7 +57,9 @@ class FireDocs extends Base {
         this.path = document.$route.path;
 
         this.key = this.path.substring(1);
+
     }
+
 
 
 
@@ -91,6 +93,7 @@ class FireDocs extends Base {
     }
 
     getHomePage() {
+
         return html`<home-app></home-app>`
     }
 

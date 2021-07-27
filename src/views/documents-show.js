@@ -3,7 +3,6 @@ import {LitElement, html, css} from 'lit';
 import page from 'page';
 import { updateDoc} from "../firebase";
 import Base from '../Base';
-
 class DocumentsShow extends Base {
 
     static get styles() {
@@ -16,7 +15,13 @@ class DocumentsShow extends Base {
 
     static get properties() {
         return {
-            doc: Object
+            doc: {
+                type: Object,
+                hasChanged: (newValue) => {
+                    const editor = document.getElementById('data-doc');
+                    if (editor) editor.innerHTML = newValue.description;
+                }
+            }
         };
     }
 
@@ -29,6 +34,7 @@ class DocumentsShow extends Base {
     updateData(e) {
         let data = document.getElementById('data-doc');
         if (data !== null) {
+            console.log(data.innerHTML)
             this.doc.description = data.innerHTML;
         }
 
@@ -70,9 +76,7 @@ class DocumentsShow extends Base {
                         <button class="tool-items fa fa-align-right" onclick="document.execCommand('justifyRight',false,'')"></button>
                     </div>
                     <div class="text-center mt-6" style="border: 1px solid black">
-                        <div class="editor" contenteditable id="data-doc">
-                            <span>${this.doc.description}</span>
-                        </div>
+                        <div class="editor" contenteditable id="data-doc"></div>
                     </div>
                     <div class="text-center mt-6">
                         <button class="text-center shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
