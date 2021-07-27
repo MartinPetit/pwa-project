@@ -16,7 +16,9 @@ class DocumentsShow extends Base {
 
     static get properties() {
         return {
-            doc: Object
+            doc: {
+                type: Object
+            }
         };
     }
 
@@ -39,7 +41,6 @@ class DocumentsShow extends Base {
                 this.editor.setData(htmlentities.decode(this.doc.description))
             }
         }
-
     }
 
     updateData() {

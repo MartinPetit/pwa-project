@@ -26,6 +26,15 @@
     </div>
     <script src="./app.js" type="module"></script>
     <script src="./fireDocs.js" type="module"></script>
+    <script>
+        if('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('/service-worker.js')
+                .then(function() { console.log("Service Worker Registered"); });
+        }
+    </script>
+
+
 
 </body>
 </html>
