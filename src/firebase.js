@@ -204,11 +204,11 @@ export function updateDocIdb(db, document, key) {
     // get the Contacts object store
     const store = txn.objectStore('Documents');
     //
-    store.get(key).onsuccess = function(e) {
+    /*store.get(key).onsuccess = function(e) {
         var obj = e.target.result;
         obj.description = document;
         store.put(obj, key);
-    };
+    };*/
 
     // close the database once the
     // transaction completes
