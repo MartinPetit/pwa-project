@@ -1,0 +1,25 @@
+{
+  "name": "PWA-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "npx snowpack dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@jadex/snowpack-plugin-tailwindcss-jit": "^0.3.0",
+    "@snowpack/plugin-postcss": "^1.4.3",
+    "autoprefixer": "^10.3.1",
+    "postcss": "^8.3.6",
+    "snowpack": "^3.8.3",
+    "tailwindcss": "^2.2.7"
+  },
+  "dependencies": {
+    "firebase": "^8.8.0",
+    "lit": "^2.0.0-rc.2",
+    "page": "^1.11.6"
+  }
+}
